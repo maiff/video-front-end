@@ -1,0 +1,83 @@
+<head>
+
+  <!-- If you'd like to support IE8 -->
+</head>
+
+<body>
+  <video src="out.mp4" height="360" width="640" controls></video>
+  
+
+  <script src="http://vjs.zencdn.net/5.14.1/video.js"></script>
+  <button id="capture">Capture</button>
+  <div id="output">
+  	<canvas id="canvas">
+  		
+  	</canvas>
+
+  </div>
+</body>
+
+<script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+<script type="text/javascript">
+	(function() {
+  "use strict";
+  var video, $output;
+  var scale = 0.25;
+  var initialize = function() {
+    $output = $("#output");
+    video = $("video").get(0);
+    $("#capture").click(captureImage);        
+  };
+  var canvas = document.getElementById("canvas");
+  var captureImage = function() {
+  	video.pause()
+    
+    canvas.width = video.videoWidth * scale;
+    canvas.height = video.videoHeight * scale;
+    canvas.getContext('2d')
+       .drawImage(video, 0, 0, canvas.width, canvas.height);
+   
+    
+  };
+
+  canvas.addEventListener("mousedown", function (evt) {   
+    var mousePos = getMousePos(canvas, evt); 
+    var beginX=mousePos.x;
+    var beginY=mousePos.y;
+    //alert(mousePos.x + ',' + mousePos.y);
+    canvas.addEventListener("mouseup",function(evt){
+    	var mousePosEnd = getMousePos(canvas, evt); 
+    	Xian(beginX,beginY,mousePosEnd.x,mousePosEnd.y);
+    })
+}, false);  
+//Get Mouse Position   
+function getMousePos(canvas, evt) {   
+    var rect = canvas.getBoundingClientRect();   
+    return {   
+        x: evt.clientX - rect.left,   
+        y: evt.clientY - rect.top   
+    };   
+} 
+function Xian(beginX,beginY,endX,endY) {
+	var test=canvas.getContext('2d');
+	test.strokeStyle = "red";
+	test.lineWidth = 1;
+	test.beginPath();
+	test.moveTo(beginX, beginY);//设置起点
+	test.lineTo(endX,beginY);//画线
+	test.moveTo(endX, beginY);//拿起画笔到新坐标
+	test.lineTo(endX, endY);//画线
+	test.moveTo(endX, endY);
+	test.lineTo(beginX, endY);//画线
+	test.moveTo(beginX, endY);
+	test.lineTo(beginX, beginY);//画线
+	test.closePath();
+	test.stroke();
+
+	console.log(`(${beginX},${beginY})`)
+	console.log(`(${endX},${endY})`)
+}
+
+  $(initialize);      
+}());
+</script>
